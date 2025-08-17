@@ -245,40 +245,40 @@ textarea {
           <th class="purple text-center" colspan="3">CLIENT</th>
           <td class="no-border"></td>
           <th class="purple">Production Needs</th>
-          <th><input type="checkbox" /> 8A</th>
-          <th><input type="checkbox"/>Customize</th>
+          <th>8A<input type="checkbox"  id="chk8A" onclick="toggleCheckboxes(this)"/> </th>
+          <th>Customize <input type="checkbox" id="chkCustomize" onclick="toggleCheckboxes(this)" /></th>
         </tr>
         <tr>
-          <td colspan="2">w/out commission:</td>
+          <td colspan="2">w/out commission:<input type="checkbox" /></td>
           <td colspan="3">Distributor: <input type="checkbox" /></td>
           <td class="no-border"></td>
           <td>Inspection Tag:</td>
           <td colspan="2"><input type="checkbox" /></td>
         </tr>
         <tr>
-          <td colspan="2">w/ commission:</td>
+          <td colspan="2">w/ commission:<input type="checkbox" /></td>
           <td colspan="3">Non Distributor: <input type="checkbox" /></td>
           <td class="no-border"></td>
           <td>Expiration Date:</td>
           <td colspan="2"><input type="checkbox" /></td>
         </tr>
         <tr>
-          <td colspan="2">w/ bfp commission:</td>
+          <td colspan="2">w/ bfp commission:<input type="checkbox" /></td>
           <td colspan="3">End User: <input type="checkbox" /></td>
           <td class="no-border"></td>
           <td>Mfg Date:</td>
           <td colspan="2"><input type="checkbox" /></td>
         </tr>
         <tr>
-          <td colspan="2">Vat included:</td>
+          <td colspan="2">Vat included:<input type="checkbox" /></td>
           <td colspan="3">Corporate: <input type="checkbox" /></td>
           <td class="no-border"></td>
           <td>Serial No.:</td>
           <td colspan="2"><input type="checkbox" /></td>
         </tr>
         <tr>
-          <td colspan="2">Vat excluded: <input type="checkbox" /></td>
-          <td colspan="3">SALES OFFICER: <input type="text" /></td>
+          <td colspan="2">Vat excluded:  <input type="checkbox" /></td>
+          <td colspan="3">SALES OFFICER: <input type="test" /></td>
           <td class="no-border"></td>
           <td>Only do not test and press handle:</td>
           <td colspan="2"><input type="checkbox" /></td>
@@ -286,12 +286,15 @@ textarea {
         <tr>
           <td colspan="2">w/ ewt 1%: <input type="checkbox" /></td>
           <td colspan="3"></td>
+          <td class="no-border"></td>
+          <td>Decals/Sticker:</td>
+          <td colspan="2"><input type="checkbox" /></td>
         </tr>
 
         <!-- Headers: Items -->
         <tr>
+          <th class="purple">UNIT</th>
           <th class="purple">QTY</th>
-          <th class="purple">Unit</th>
           <th class="purple" colspan="2">Articles</th>
           <th class="purple">PRICE</th>
           <th class="purple" colspan="3">Amount</th>
@@ -300,8 +303,8 @@ textarea {
 
         <!-- Sample Initial Row -->
         <tr class="item-row">
-          <td><input type="number" class="qty" oninput="calculateTotal()" /></td>
           <td><input type="text" /></td>
+          <td><input type="number" class="qty" oninput="calculateTotal()"  /></td>
           <td colspan="2"><input type="text" /></td>
           <td><input type="number" step="0.01" class="price" oninput="calculateTotal()" /></td>
           <td colspan="3" class="amount"></td>
@@ -381,6 +384,17 @@ function savePDF() {
     element.style.width = "100%";
   });
 }
+
+ function toggleCheckboxes(clicked) {
+    let chk8A = document.getElementById("chk8A");
+    let chkCustomize = document.getElementById("chkCustomize");
+
+    if (clicked.id === "chk8A") {
+      chkCustomize.disabled = chk8A.checked; 
+    } else if (clicked.id === "chkCustomize") {
+      chk8A.disabled = chkCustomize.checked;
+    }
+  }
 </script>
 
 
