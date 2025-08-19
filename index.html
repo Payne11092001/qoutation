@@ -30,6 +30,51 @@ html, body {
   line-height: 1.4;
 }
 
+ /*  Disabled Save button styling */
+  #saveBtn:disabled {
+    background-color: #dc3545 !important; /* red */
+    cursor: not-allowed;
+    opacity: 0.85;
+    position: relative;
+  }
+
+  /* Tooltip container */
+  #saveBtn[data-tooltip]:disabled::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 120%; /* show above the button */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  /* Small arrow under tooltip */
+  #saveBtn[data-tooltip]:disabled::before {
+    content: "";
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  /* Show tooltip on hover */
+  #saveBtn[data-tooltip]:disabled:hover::after,
+  #saveBtn[data-tooltip]:disabled:hover::before {
+    opacity: 1;
+  }
 .toolbar {
   display: flex;
   gap: 10px;
@@ -134,8 +179,26 @@ textarea {
   box-sizing: border-box;
 }
 textarea {
-  resize: none;
-  height: 60px;
+  height: 120px;
+  resize: vertical; /* user can drag vertically */
+}
+
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: #555;
+  margin-top: 20px;
+  padding: 10px 0;
+}
+.dev-name {
+  font-weight: bold;
+  color: #0d6efd; /* Bootstrap blue */
+}
+
+@media print {
+  .footer {
+    display: none; /* Hide footer when printing / saving as PDF */
+  }
 }
 
 @page {
@@ -182,7 +245,8 @@ textarea {
 
 <div class="toolbar">
   <button class="btn" onclick="addRow()">➕ Add Row</button>
-<button class="btn" onclick="savePDF()">💾 Save as PDF</button>
+<button id="saveBtn" class="btn" onclick="savePDF()" disabled>💾 Save as PDF</button>
+
 </div>
 
 <div id="printArea">
@@ -212,28 +276,28 @@ textarea {
         <!-- Company / Date / Payment row -->
         <tr>
           <td class="label">Company name:</td>
-          <td colspan="4"><input type="text" /></td>
+          <td colspan="4"><input type="text"required /></td>
           <td class="no-border"></td>
           <td class="label">Cash:</td>
           <td colspan="4"><input type="checkbox" /></td>
         </tr>
         <tr>
           <td class="label">Address:</td>
-          <td colspan="4"><input type="text" /></td>
+          <td colspan="4"><input type="text" required/></td>
           <td class="no-border"></td>
           <td class="label">Gcash:</td>
           <td colspan="4"><input type="checkbox" /></td>
         </tr>
         <tr>
           <td class="label">Order Date:</td>
-          <td colspan="4"><input type="date" /></td>
+          <td colspan="4"><input type="date" required/></td>
           <td class="no-border"></td>
           <td class="label">Bank Transfer:</td>
           <td colspan="4"><input type="checkbox" /></td>
         </tr>
         <tr>
           <td class="label">Delivery Date:</td>
-          <td colspan="4"><input type="date" /></td>
+          <td colspan="4"><input type="date" required/></td>
           <td class="no-border"></td>
           <td class="label">Cheque:</td>
           <td colspan="4"><input type="checkbox" /></td>
@@ -278,7 +342,7 @@ textarea {
         </tr>
         <tr>
           <td colspan="2">Vat excluded:  <input type="checkbox" /></td>
-          <td colspan="3">SALES OFFICER: <input type="test" /></td>
+          <td colspan="3">SALES OFFICER: <input type="test" required/></td>
           <td class="no-border"></td>
           <td>Only do not test and press handle:</td>
           <td colspan="2"><input type="checkbox" /></td>
@@ -297,18 +361,18 @@ textarea {
           <th class="purple">QTY</th>
           <th class="purple" colspan="2">Articles</th>
           <th class="purple">PRICE</th>
-          <th class="purple" colspan="3">Amount</th>
-          <th class="purple">Action</th>
+          <th class="purple" colspan="2">Amount</th>
+          <th class="purple" colspan="2">Action</th>
         </tr>
 
         <!-- Sample Initial Row -->
         <tr class="item-row">
-          <td><input type="text" /></td>
-          <td><input type="number" class="qty" oninput="calculateTotal()"  /></td>
-          <td colspan="2"><input type="text" /></td>
-          <td><input type="number" step="0.01" class="price" oninput="calculateTotal()" /></td>
-          <td colspan="3" class="amount"></td>
-          <td><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
+          <td><input type="text" required/></td>
+          <td><input type="number" class="qty" oninput="calculateTotal()"required  /></td>
+          <td colspan="2"><input type="text"required /></td>
+          <td><input type="number" step="0.01" class="price" oninput="calculateTotal()"required /></td>
+          <td colspan="2" class="amount"></td>
+          <td  colspan="2"><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
         </tr>
 
         <!-- Total Price Row -->
@@ -328,6 +392,14 @@ textarea {
   </section>
 </div>
 
+<!-- Footer outside printArea -->
+<footer class="footer">
+  © 2025 8A Fire Safety Maintenance and Manufacturing Corp. | All Rights Reserved 
+  <br>
+  <span class="dev-name">Developed by ArmanB.</span>
+</footer>
+
+
 <script>
 function calculateTotal(){
   let rows = document.querySelectorAll(".item-row");
@@ -340,6 +412,7 @@ function calculateTotal(){
     total += amount;
   });
   document.getElementById("totalPrice").value = total.toFixed(2);
+  validateForm();
 }
 
 function addRow(){
@@ -349,26 +422,36 @@ function addRow(){
   let newRow = document.createElement("tr");
   newRow.classList.add("item-row");
   newRow.innerHTML = `
-    <td><input type="number" class="qty" oninput="calculateTotal()" /></td>
-    <td><input type="text" /></td>
-    <td colspan="2"><input type="text" /></td>
-    <td><input type="number" step="0.01" class="price" oninput="calculateTotal()" /></td>
+    <td><input type="text" required /></td>
+    <td><input type="number" class="qty" oninput="calculateTotal()" required /></td>
+    <td colspan="2"><input type="text" required /></td>
+    <td><input type="number" step="0.01" class="price" oninput="calculateTotal()" required /></td>
     <td colspan="3" class="amount"></td>
     <td><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
   `;
   table.insertBefore(newRow, totalRow);
+
+  attachValidation();
+  validateForm();
 }
 
 function removeRow(btn){
   let row = btn.closest("tr");
   row.remove();
   calculateTotal();
+  validateForm();
 }
 
 function savePDF() {
-  const element = document.getElementById("printArea");
+  const saveBtn = document.getElementById("saveBtn");
+  validateForm();
+  if (saveBtn.disabled) {
+    alert("⚠️ Please fill in at least one required field before saving as PDF.");
+    return;
+  }
 
-  // Temporarily force exact A4 width
+  const element = document.getElementById("printArea");
+  const originalWidth = element.style.width;
   element.style.width = "210mm";
 
   const opt = {
@@ -380,21 +463,58 @@ function savePDF() {
   };
 
   html2pdf().set(opt).from(element).save().then(() => {
-    // Reset after saving so it's responsive again
-    element.style.width = "100%";
+    element.style.width = originalWidth || "100%";
   });
 }
 
- function toggleCheckboxes(clicked) {
-    let chk8A = document.getElementById("chk8A");
-    let chkCustomize = document.getElementById("chkCustomize");
+function toggleCheckboxes(clicked) {
+  let chk8A = document.getElementById("chk8A");
+  let chkCustomize = document.getElementById("chkCustomize");
 
-    if (clicked.id === "chk8A") {
-      chkCustomize.disabled = chk8A.checked; 
-    } else if (clicked.id === "chkCustomize") {
-      chk8A.disabled = chkCustomize.checked;
-    }
+  if (clicked.id === "chk8A") {
+    chkCustomize.disabled = chk8A.checked; 
+  } else if (clicked.id === "chkCustomize") {
+    chk8A.disabled = chkCustomize.checked;
   }
+}
+
+// ✅ Enable Save if at least 1 required field is filled
+function validateForm() {
+  const saveBtn = document.getElementById("saveBtn");
+  const requiredControls = document.querySelectorAll("#printArea input[required], #printArea textarea[required]");
+  let anyFilled = false;
+
+  requiredControls.forEach(el => {
+    if (el.type === "checkbox") {
+      if (el.checked) anyFilled = true;
+      return;
+    }
+    const val = String(el.value || "").trim();
+    if (val !== "") anyFilled = true;
+  });
+
+  saveBtn.disabled = !anyFilled;
+
+  // Add tooltip only when disabled
+  if (saveBtn.disabled) {
+    saveBtn.setAttribute("data-tooltip", "⚠️ Please fill at least one required field to enable saving.");
+  } else {
+    saveBtn.removeAttribute("data-tooltip");
+  }
+}
+
+function attachValidation() {
+  const controls = document.querySelectorAll("#printArea input[required], #printArea textarea[required]");
+  controls.forEach(el => {
+    el.removeEventListener("input", validateForm);
+    el.addEventListener("input", validateForm);
+    el.removeEventListener("change", validateForm);
+    el.addEventListener("change", validateForm);
+  });
+}
+
+attachValidation();
+validateForm();
 </script>
 
 
