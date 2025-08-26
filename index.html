@@ -7,6 +7,12 @@
 
 <!-- html2pdf.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- jQuery (required for Select2) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Select2 CSS & JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <style>
 :root {
@@ -83,6 +89,22 @@ html, body {
   align-items: center;
   justify-content: flex-end;
   flex-wrap: wrap;
+    /* 🔹 Start hidden, animate in */
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInToolbar 0.8s ease-out forwards;
+}
+
+/* 🔹 Keyframes for fade-in + slide-up */
+@keyframes fadeInToolbar {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .btn {
@@ -93,10 +115,34 @@ html, body {
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
-  transition: 0.2s ease;
+
+  /* 🔹 Smooth transitions */
+  transition: background 0.3s ease,
+              transform 0.2s ease,
+              box-shadow 0.3s ease;
 }
+
+/* 🔹 Hover effect */
 .btn:hover {
-  opacity: 0.9;
+  background: #0056b3;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+}
+
+/* 🔹 Active (click) effect */
+.btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+/* 🔹 Disabled style */
+.btn:disabled {
+  background: #aaa;
+  border-color: #aaa;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
 }
 .btn-danger {
   background: #dc3545;
@@ -239,14 +285,102 @@ textarea {
   }
 }
 
+  .commission-input {
+    width: 50px;       /* adjust width */
+    padding: 5px;       /* inner spacing */
+    border: 1px solid #666;
+    border-radius: 5px; /* rounded corners */
+    text-align: right;  /* numbers align right */
+    font-size: 14px;
+  }
+
+  th input.commission-input:focus {
+    outline: 2px solid #353835; /* highlight when typing */
+  }
+
+/* ===== Mobile Responsive ===== */
+@media (max-width: 768px) {
+  body {
+    padding: 6px;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .btn {
+    padding: 10px;
+    font-size: 14px;
+    width: 100%; /* full width buttons on mobile */
+  }
+
+  .sheet {
+    padding: 6px;
+    border-radius: 4px;
+    overflow-x: auto; /* allow scroll on smaller screens */
+  }
+
+  table {
+    font-size: 12px;
+    min-width: 700px; /* prevent columns from squishing too much */
+  }
+
+  th, td {
+    padding: 4px;
+  }
+
+  /* Inputs inside table */
+  input[type="text"],
+  input[type="date"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 12px;
+    padding: 4px;
+  }
+
+  textarea {
+    height: 80px; /* smaller default height on mobile */
+  }
+
+  .note-cell {
+    width: auto; /* let it shrink naturally */
+    font-size: 12px;
+  }
+
+  /* Footer small */
+  .footer {
+    font-size: 11px;
+    padding: 6px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  table {
+    font-size: 11px;
+    min-width: 600px;
+  }
+
+  .btn {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .commission-input {
+    width: 40px;
+    font-size: 12px;
+  }
+}
+
 </style>
 </head>
 <body>
 
 <div class="toolbar">
   <button class="btn" onclick="addRow()">➕ Add Row</button>
-<button id="saveBtn" class="btn" onclick="savePDF()" disabled>💾 Save as PDF</button>
-
+  <button id="saveBtn" class="btn" onclick="savePDF()" disabled>💾 Save as PDF</button>
 </div>
 
 <div id="printArea">
@@ -254,8 +388,8 @@ textarea {
     <div class="table-wrap">
       <table aria-label="Sales Order" id="orderTable">
         <colgroup>
-          <col style="width:20%">
-          <col style="width:10%">
+          <col style="width:15%">
+          <col style="width:15%">
           <col style="width:34%">
           <col style="width:14%">
           <col style="width:14%">
@@ -276,13 +410,13 @@ textarea {
         <!-- Company / Date / Payment row -->
         <tr>
           <td class="label">Company name:</td>
-          <td colspan="4"><input type="text"required /></td>
+          <td colspan="4" ><input type="text"required placeholder="Input the company name"/></td>
           <td colspan="2"class="label">Cash:</td>
           <td colspan="3"><input type="checkbox" /></td>
         </tr>
         <tr>
           <td class="label">Address:</td>
-          <td colspan="4"><input type="text" required/></td>
+          <td colspan="4"><input type="text" required placeholder="Input the company name"/></td>
           <td colspan="2"class="label">Gcash:</td>
           <td colspan="4"><input type="checkbox" /></td>
         </tr>
@@ -324,12 +458,14 @@ textarea {
           <td colspan="5">Mfg Date: <input type="checkbox" /></td>
         </tr>
         <tr>
-          <td colspan="1">Vat included:<input type="checkbox" /></td>
+         <td>  VAT Included: <input type="checkbox" id="vatIncluded" onchange="calculateTotal()"onclick="toggleCheckboxes(this)"></td>
+
           <td colspan="3">Corporate: <input type="checkbox" /></td>
           <td colspan="5">Serial No.: <input type="checkbox" /></td>
         </tr>
         <tr>
-          <td colspan="1">Vat excluded:  <input type="checkbox" /></td>
+         <td>VAT Excluded: <input type="checkbox" id="vatExcluded" onchange="calculateTotal()" onclick="toggleCheckboxes(this)"></td>
+
           <td colspan="3">SALES OFFICER: <input type="test" required/></td>
           <td colspan="5">Only do not test and press handle:<input type="checkbox" /></td>
         </tr>
@@ -351,18 +487,55 @@ textarea {
 
         <!-- Sample Initial Row -->
         <tr class="item-row">
-          <td><input type="text" required/></td>
-          <td><input type="number" class="qty" oninput="calculateTotal()"required  /></td>
-          <td colspan="2"><input type="text"required /></td>
-          <td><input type="number" step="0.01" class="price" oninput="calculateTotal()"required /></td>
-          <td colspan="2" class="amount"></td>
+          <td>
+            <select class="itemSelect" style="width:100%;" required>
+              <option value="">-- Select Item --</option>
+              <option value="fire-hose">1 Lbs</option>
+              <option value="smoke-detector">3 lbs</option>
+              <option value="circuit-breaker">10 lbs</option>
+              <option value="water-pump">20 lbs</option>
+              <option value="pvc-pipe">50 lbs</option>
+                <option value="pvc-pipe">100 lbs</option>
+            </select>
+          </td>
+
+          <td ><input type="number" class="qty" oninput="calculateTotal()"required placeholder="0.00"  /></td>
+         
+          <td colspan="2">
+            <select id="categorySelect" class="categorySelect" style="width:100%;" required>
+              <option value="">-- Select Category --</option>
+              <option value="fire-protection">ABC DRY CHEMICAL FIRE EXTINGUISHER</option>
+              <option value="electrical">FOAM TYPE (AFFF) FIRE EXTINGUISHER</option>
+              <option value="plumbing">HFC-236fa (CLEAN AGENT) FIRE EXTINGUISHER</option>
+              <option value="mepfs">HCFC 123 CHEMICAL FIRE EXTINGUISHER</option>
+            </select>
+          </td>
+
+
+          <td><input type="number" step="0.01" class="price" oninput="calculateTotal()"required placeholder="0.00" /></td>
+          <td colspan="2" class="amount" ></td>
           <td  colspan="2"><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
         </tr>
 
         <!-- Total Price Row -->
         <tr class="total-row">
-          <td colspan="5" style="text-align:right;">Total Price:</td>
-          <td colspan="4"><input type="number" step="0.01" id="totalPrice" readonly /></td>
+          <td colspan="5" style="text-align:right;" >Total Price:</td>
+          <td colspan="4"><input type="number" step="0.01" id="totalPrice" readonly placeholder="0.00" /></td>
+        </tr>
+       <!--commision -->
+        <tr>
+          <th colspan="2">
+            BFP Commission 
+            <input type="number" class="commission-input" placeholder="0.00" />
+          </th>
+          <th colspan="2">
+            Distributor Commission 
+            <input type="number" class="commission-input" placeholder="0.00" />
+          </th>
+          <th colspan="5">
+            Corporate Commission 
+            <input type="number" class="commission-input" placeholder="0.00" />
+          </th>
         </tr>
 
         <!-- Notes -->
@@ -380,45 +553,101 @@ textarea {
 <footer class="footer">
   © 2025 8A Fire Safety Maintenance and Manufacturing Corp. | All Rights Reserved 
   <br>
-  <span class="dev-name">Developed by ArmanB.</span>
+  <a href="https://payne11092001.github.io/portfiolio/" target="_blank" class="dev-name">Developed by ArmanB.</a>
 </footer>
 
 
+
 <script>
-function calculateTotal(){
+function calculateTotal() {
   let rows = document.querySelectorAll(".item-row");
   let total = 0;
-  rows.forEach(row=>{
+
+  let vatIncluded = document.getElementById("vatIncluded")?.checked;
+
+  rows.forEach(row => {
     let qty = parseFloat(row.querySelector(".qty")?.value) || 0;
-    let price = parseFloat(row.querySelector(".price")?.value) || 0;
-    let amount = qty * price;
+    let priceInput = row.querySelector(".price");
+
+    // ✅ Store original price if not already stored
+    let basePrice = parseFloat(priceInput.getAttribute("data-base-price"));
+    if (!basePrice) {
+      basePrice = parseFloat(priceInput.value) || 0;
+      priceInput.setAttribute("data-base-price", basePrice);
+    }
+
+    // ✅ Determine displayed price
+    let displayPrice = vatIncluded ? basePrice * 1.12 : basePrice;
+
+    // ✅ Only update input value for display, not base
+    priceInput.value = displayPrice.toFixed(2);
+
+    // ✅ Calculate amount
+    let amount = qty * displayPrice;
     row.querySelector(".amount").textContent = amount > 0 ? amount.toFixed(2) : "";
+
     total += amount;
   });
+
   document.getElementById("totalPrice").value = total.toFixed(2);
   validateForm();
 }
 
-function addRow(){
-  let table = document.getElementById("orderTable").querySelector("tbody");
-  let totalRow = table.querySelector(".total-row");
+  // Add Row Function
+  function addRow(){
+    let table = document.getElementById("orderTable").querySelector("tbody");
+    let totalRow = table.querySelector(".total-row");
 
-  let newRow = document.createElement("tr");
-  newRow.classList.add("item-row");
-  newRow.innerHTML = `
-    <td><input type="text" required /></td>
-    <td><input type="number" class="qty" oninput="calculateTotal()" required /></td>
-    <td colspan="2"><input type="text" required /></td>
-    <td><input type="number" step="0.01" class="price" oninput="calculateTotal()" required /></td>
-    <td colspan="3" class="amount"></td>
-    <td><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
-  `;
-  table.insertBefore(newRow, totalRow);
+    let newRow = document.createElement("tr");
+    newRow.classList.add("item-row");
+    newRow.innerHTML = `
+      <td>
+        <select class="itemSelect" style="width:100%;" required>
+          <option value="">-- Select Item --</option>
+          <option value="fire-hose">Fire Hose</option>
+          <option value="smoke-detector">Smoke Detector</option>
+          <option value="circuit-breaker">Circuit Breaker</option>
+          <option value="water-pump">Water Pump</option>
+          <option value="pvc-pipe">PVC Pipe</option>
+        </select>
+      </td>
 
-  attachValidation();
-  validateForm();
-}
+      <td><input type="number" class="qty"onchange="calculateTotal()" oninput="calculateTotal()" required placeholder="0.00"/></td>
+      
+      <td colspan="2">
+        <select class="categorySelect" style="width:100%;" required>
+          <option value="">-- Select Category --</option>
+          <option value="fire-protection">ABC DRY CHEMICAL FIRE EXTINGUISHER</option>
+          <option value="electrical">FOAM TYPE (AFFF) FIRE EXTINGUISHER</option>
+          <option value="plumbing">HFC-236fa (CLEAN AGENT) FIRE EXTINGUISHER</option>
+          <option value="mepfs">HCFC 123 CHEMICAL FIRE EXTINGUISHER</option>
+        </select>
+      </td>
 
+      <td><input type="number" step="0.01" class="price"onchange="calculateTotal()" oninput="calculateTotal()" required /></td>
+      <td colspan="2" class="amount"></td>
+      <td colspan="2"><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
+    `;
+
+    table.insertBefore(newRow, totalRow);
+
+    // ✅ Reinitialize Select2 for the new row
+    initSelect2();
+
+    attachValidation();
+    validateForm();
+  }
+
+  // Remove Row Function
+  function removeRow(btn){
+    let row = btn.closest("tr");
+    row.classList.add("removed");
+    setTimeout(() => {
+      row.remove();
+      calculateTotal();
+      validateForm();
+    }, 300); // wait for fadeOut animation
+  }
 function removeRow(btn){
   let row = btn.closest("tr");
   row.remove();
@@ -455,12 +684,24 @@ function toggleCheckboxes(clicked) {
   let chk8A = document.getElementById("chk8A");
   let chkCustomize = document.getElementById("chkCustomize");
 
+  // Existing logic
   if (clicked.id === "chk8A") {
     chkCustomize.disabled = chk8A.checked; 
   } else if (clicked.id === "chkCustomize") {
     chk8A.disabled = chkCustomize.checked;
   }
+
+  // ✅ New VAT logic
+  let vatIncluded = document.getElementById("vatIncluded");
+  let vatExcluded = document.getElementById("vatExcluded");
+
+  if (clicked.id === "vatIncluded") {
+    vatExcluded.checked = false;
+  } else if (clicked.id === "vatExcluded") {
+    vatIncluded.checked = false;
+  }
 }
+
 
 // ✅ Enable Save if at least 1 required field is filled
 function validateForm() {
@@ -500,6 +741,33 @@ function attachValidation() {
 attachValidation();
 validateForm();
 </script>
+
+<!-- Initialize Select2 -->
+<script>
+  // ✅ Initialize Select2 (first load + dynamically added selects)
+  function initSelect2() {
+    $('.categorySelect').select2({
+      placeholder: "-- Select Category --",
+      allowClear: true,
+      tags: true
+    });
+
+    $('.itemSelect').select2({
+      placeholder: "-- Select Item --",
+      allowClear: true,
+      tags: true
+    });
+  }
+
+  // Run once on page load
+  $(document).ready(function() {
+    initSelect2();
+  });
+
+ 
+</script>
+
+
 
 
 </body>
