@@ -406,7 +406,6 @@ textarea {
     
           <th colspan="4">Mode of payment</th>
         </tr>
-
         <!-- Company / Date / Payment row -->
         <tr>
           <td class="label">Company name:</td>
@@ -433,8 +432,7 @@ textarea {
           <td colspan="2"class="label">Cheque:</td>
           <td colspan="4"><input type="checkbox" /></td>
         </tr>
-
-        <!-- TAX & CLIENT Section -->
+                                             
         <tr>
           <th class="purple text-center"colspan="1" >TAX</th>
           <th class="purple text-center" colspan="3">CLIENT</th>
@@ -458,13 +456,16 @@ textarea {
           <td colspan="5">Mfg Date: <input type="checkbox" /></td>
         </tr>
         <tr>
-         <td>  VAT Included: <input type="checkbox" id="vatIncluded" onchange="calculateTotal()"onclick="toggleCheckboxes(this)"></td>
-
+       <td>
+  VAT Included: <input type="checkbox" id="vatIncluded" onchange="calculateTotal()" onclick="toggleCheckboxes(this)">
+</td>
           <td colspan="3">Corporate: <input type="checkbox" /></td>
           <td colspan="5">Serial No.: <input type="checkbox" /></td>
         </tr>
         <tr>
-         <td>VAT Excluded: <input type="checkbox" id="vatExcluded" onchange="calculateTotal()" onclick="toggleCheckboxes(this)"></td>
+        <td>
+  VAT Excluded: <input type="checkbox" id="vatExcluded" onchange="calculateTotal()" onclick="toggleCheckboxes(this)">
+</td>
 
           <td colspan="3">SALES OFFICER: <input type="test" required/></td>
           <td colspan="5">Only do not test and press handle:<input type="checkbox" /></td>
@@ -474,7 +475,6 @@ textarea {
           <td colspan="3"></td>
           <td colspan="5">Decals/Sticker: <input type="checkbox" /></td>
         </tr>
-
         <!-- Headers: Items -->
         <tr>
           <th class="purple">UNIT</th>
@@ -498,21 +498,21 @@ textarea {
                 <option value="pvc-pipe">100 lbs</option>
             </select>
           </td>
-
-          <td ><input type="number" class="qty" oninput="calculateTotal()"required placeholder="0.00"  /></td>
-         
+          <td ><input type="number" class="qty" oninput="calculateTotal()"required placeholder="0.00"  /></td>         
           <td colspan="2">
             <select id="categorySelect" class="categorySelect" style="width:100%;" required>
               <option value="">-- Select Category --</option>
-              <option value="fire-protection">ABC DRY CHEMICAL FIRE EXTINGUISHER</option>
-              <option value="electrical">FOAM TYPE (AFFF) FIRE EXTINGUISHER</option>
-              <option value="plumbing">HFC-236fa (CLEAN AGENT) FIRE EXTINGUISHER</option>
-              <option value="mepfs">HCFC 123 CHEMICAL FIRE EXTINGUISHER</option>
+              <option value=" DRY-CHEMICAL"> DRY CHEMICAL FIRE EX.</option>
+              <option value=" DRY-CHEMICAL"> DRY CHEMICAL FIRE EX. CEILING TYPE</option>
+              <option value="FOAM">FOAM TYPE  FIRE EX.</option>
+              <option value="FOAM">FOAM TYPE  FIRE EX.  CEILING TYPE</option>
+              <option value="HFC-236fa">HFC-236fa FIRE EX.</option>
+              <option value="HFC-236fa">HFC-236fa FIRE EX. CEILING TYPE</option>
+              <option value="HCFC123">HCFC123 CHEMICAL FIRE EX.</option>
+              <option value="HCFC123">HCFC123 CHEMICAL FIRE EX. CEILING TYPE</option>
             </select>
           </td>
-
-
-          <td><input type="number" step="0.01" class="price" oninput="calculateTotal()"required placeholder="0.00" /></td>
+          <td><input type="text"  class="price" oninput="calculateTotal()"required  placeholder="0.00" /></td>
           <td colspan="2" class="amount" ></td>
           <td  colspan="2"><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
         </tr>
@@ -520,7 +520,7 @@ textarea {
         <!-- Total Price Row -->
         <tr class="total-row">
           <td colspan="5" style="text-align:right;" >Total Price:</td>
-          <td colspan="4"><input type="number" step="0.01" id="totalPrice" readonly placeholder="0.00" /></td>
+          <td colspan="4"><input type="text"  id="totalPrice" readonly placeholder="0.00" /></td>
         </tr>
        <!--commision -->
         <tr>
@@ -560,31 +560,51 @@ textarea {
 
 
 <script>
+function toggleCheckboxes(clicked) {
+  // Ensure only one checkbox is active at a time
+  if (clicked.id === "vatIncluded") {
+    document.getElementById("vatExcluded").checked = false;
+  } else if (clicked.id === "vatExcluded") {
+    document.getElementById("vatIncluded").checked = false;
+  }
+}
+
 function calculateTotal() {
   let rows = document.querySelectorAll(".item-row");
   let total = 0;
   let vatIncluded = document.getElementById("vatIncluded")?.checked;
+  let vatExcluded = document.getElementById("vatExcluded")?.checked;
 
   rows.forEach(row => {
     let qty = parseFloat(row.querySelector(".qty")?.value) || 0;
     let priceInput = row.querySelector(".price");
 
-    // ✅ Always get the latest typed value
-    let userPrice = parseFloat(priceInput.value) || 0;
+    // ✅ Read current price directly
+    let price = parseFloat(priceInput.value) || 0;
 
-    // ✅ If VAT toggle is on, treat user input as base price and add 12%
-    // If off, just use input as-is
-    let displayPrice = vatIncluded ? userPrice * 1.12 : userPrice;
-    // ✅ Show formatted value (but allow editing freely)
-    priceInput.value = userPrice; // keep raw input visible, not overwritten
+    // ✅ Apply VAT logic
+    let displayPrice = price;
+    if (vatIncluded) {
+      displayPrice = price * 1.12;   // add 12%
+    } else if (vatExcluded) {
+      displayPrice = price / 1.12;   // remove 12%
+    }
+
+    // ✅ Update price input
+    priceInput.value = displayPrice % 1 === 0 ? displayPrice : displayPrice.toFixed(2);
+
     // ✅ Calculate amount
     let amount = qty * displayPrice;
-    row.querySelector(".amount").textContent = amount > 0 ? amount.toFixed(2) : "";
+    row.querySelector(".amount").textContent = amount > 0
+      ? (amount % 1 === 0 ? amount : amount.toFixed(2))
+      : "";
 
     total += amount;
   });
 
-  document.getElementById("totalPrice").value = total.toFixed(2);
+  // ✅ Update total
+  document.getElementById("totalPrice").value = total % 1 === 0 ? total : total.toFixed(2);
+
   validateForm();
 }
 
@@ -600,12 +620,13 @@ function calculateTotal() {
     newRow.innerHTML = `
       <td>
         <select class="itemSelect" style="width:100%;" required>
-          <option value="">-- Select Item --</option>     
-          <option value="fire-hose">Fire Hose</option>
-          <option value="smoke-detector">Smoke Detector</option>
-          <option value="circuit-breaker">Circuit Breaker</option>
-          <option value="water-pump">Water Pump</option>
-          <option value="pvc-pipe">PVC Pipe</option>
+          <option value="">-- Select Item --</option>
+          <option value="fire-hose">1 Lbs</option>
+          <option value="smoke-detector">3 lbs</option>
+          <option value="circuit-breaker">10 lbs</option>
+          <option value="water-pump">20 lbs</option>
+          <option value="pvc-pipe">50 lbs</option>
+            <option value="pvc-pipe">100 lbs</option>
         </select>
       </td>
 
