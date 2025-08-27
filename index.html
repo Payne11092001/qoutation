@@ -558,30 +558,25 @@ textarea {
 
 
 
+
 <script>
 function calculateTotal() {
   let rows = document.querySelectorAll(".item-row");
   let total = 0;
-
   let vatIncluded = document.getElementById("vatIncluded")?.checked;
 
   rows.forEach(row => {
     let qty = parseFloat(row.querySelector(".qty")?.value) || 0;
     let priceInput = row.querySelector(".price");
 
-    // ✅ Store original price if not already stored
-    let basePrice = parseFloat(priceInput.getAttribute("data-base-price"));
-    if (!basePrice) {
-      basePrice = parseFloat(priceInput.value) || 0;
-      priceInput.setAttribute("data-base-price", basePrice);
-    }
+    // ✅ Always get the latest typed value
+    let userPrice = parseFloat(priceInput.value) || 0;
 
-    // ✅ Determine displayed price
-    let displayPrice = vatIncluded ? basePrice * 1.12 : basePrice;
-
-    // ✅ Only update input value for display, not base
-    priceInput.value = displayPrice.toFixed(2);
-
+    // ✅ If VAT toggle is on, treat user input as base price and add 12%
+    // If off, just use input as-is
+    let displayPrice = vatIncluded ? userPrice * 1.12 : userPrice;
+    // ✅ Show formatted value (but allow editing freely)
+    priceInput.value = userPrice; // keep raw input visible, not overwritten
     // ✅ Calculate amount
     let amount = qty * displayPrice;
     row.querySelector(".amount").textContent = amount > 0 ? amount.toFixed(2) : "";
@@ -593,6 +588,8 @@ function calculateTotal() {
   validateForm();
 }
 
+
+
   // Add Row Function
   function addRow(){
     let table = document.getElementById("orderTable").querySelector("tbody");
@@ -603,7 +600,7 @@ function calculateTotal() {
     newRow.innerHTML = `
       <td>
         <select class="itemSelect" style="width:100%;" required>
-          <option value="">-- Select Item --</option>
+          <option value="">-- Select Item --</option>     
           <option value="fire-hose">Fire Hose</option>
           <option value="smoke-detector">Smoke Detector</option>
           <option value="circuit-breaker">Circuit Breaker</option>
@@ -624,7 +621,7 @@ function calculateTotal() {
         </select>
       </td>
 
-      <td><input type="number" step="0.01" class="price"onchange="calculateTotal()" oninput="calculateTotal()" required  placeholder="0.00"/></td>
+      <td><input type="number" step="0.01" class="price"onchange="calculateTotal()" oninput="calculateTotal()" required placeholder="0.00"/></td>
       <td colspan="2" class="amount"></td>
       <td colspan="2"><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
     `;
@@ -633,8 +630,6 @@ function calculateTotal() {
 
     // ✅ Reinitialize Select2 for the new row
     initSelect2();
-
-    attachValidation();
     validateForm();
   }
 
@@ -766,12 +761,6 @@ validateForm();
 
  
 </script>
-
-
-
-
 </body>
 </html>
-
-
 
