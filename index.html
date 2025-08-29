@@ -149,9 +149,11 @@ html, body {
   border-color: #dc3545;
 }
 
+/* ✅ Normal screen view (unchanged) */
 .sheet {
   width: 100%;
-  max-width: 210mm; /* Keep responsive but limit to A4 */
+  max-width: 297mm; /* Landscape width */
+  min-height: 210mm; /* Landscape height */
   margin: 0 auto 14px;
   background: var(--bg);
   border: 1px solid #ddd;
@@ -159,6 +161,14 @@ html, body {
   box-shadow: 0 8px 18px rgba(16,24,40,.06);
   padding: 12px;
   box-sizing: border-box;
+}
+
+/* ✅ Print / Save to PDF */
+@media print {
+  .sheet {
+    transform: scale(0.4);        /* shrink to 90% */
+    transform-origin: top center; /* keep centered */
+  }
 }
 
 .table-wrap {
@@ -389,14 +399,14 @@ textarea {
       <table aria-label="Sales Order" id="orderTable">
         <colgroup>
           <col style="width:15%">
-          <col style="width:15%">
-          <col style="width:34%">
+          <col style="width:7%">
           <col style="width:14%">
           <col style="width:14%">
-          <col style="width:2%">
-          <col style="width:18%">
-          <col style="width:12%">
           <col style="width:10%">
+          <col style="width:2%">
+          <col style="width:2%">
+          <col style="width:2%">
+          <col style="width:2%">
         </colgroup>
 
         <tbody>
@@ -404,86 +414,94 @@ textarea {
         <tr class="title-row">
           <th colspan="5">Sale's Order</th>
     
-          <th colspan="4">Mode of payment</th>
+          <th colspan="10">Mode of payment</th>
         </tr>
         <!-- Company / Date / Payment row -->
         <tr>
           <td class="label">Company name:</td>
           <td colspan="4" ><input type="text"required placeholder="Input the company name"/></td>
           <td colspan="2"class="label">Cash:</td>
-          <td colspan="3"><input type="checkbox" /></td>
+          <td colspan="8"><input type="checkbox" /></td>
         </tr>
         <tr>
           <td class="label">Address:</td>
           <td colspan="4"><input type="text" required placeholder="Input the address"/></td>
           <td colspan="2"class="label">Gcash:</td>
-          <td colspan="4"><input type="checkbox" /></td>
+          <td colspan="8"><input type="checkbox" /></td>
         </tr>
         <tr>
           <td class="label">Order Date:</td>
           <td colspan="4"><input type="date" required/></td>
           <td colspan="2"class="label">Bank Transfer:</td>
-          <td colspan="4"><input type="checkbox" /></td>
+          <td colspan="8"><input type="checkbox" /></td>
         </tr>
         <tr>
           <td class="label">Delivery Date:</td>
           <td colspan="4"><input type="date" required/></td>
-        
           <td colspan="2"class="label">Cheque:</td>
-          <td colspan="4"><input type="checkbox" /></td>
+          <td colspan="8"><input type="checkbox" /></td>
         </tr>
                                              
         <tr>
           <th class="purple text-center"colspan="1" >TAX</th>
           <th class="purple text-center" colspan="3">CLIENT</th>
-          <th colspan="1" class="purple">Production Needs</th>
-          <th colspan="2">Customize <input type="checkbox" id="chkCustomize" onclick="toggleCheckboxes(this)" /></th>
-          <th  colspan="2">8A<input type="checkbox"  id="chk8A" onclick="toggleCheckboxes(this)"/> </th>
+          <th colspan="5" class="purple">Production Needs</th>
+          <th colspan="3">8A<input type="checkbox" id="chkCustomize" onclick="toggleCheckboxes(this)" /></th>
+          <th  colspan="7">Customize<input type="checkbox"  id="chk8A" onclick="toggleCheckboxes(this)"/> </th>
         </tr>
         <tr>
           <td colspan="1">w/out commission:<input type="checkbox" /></td>
           <td colspan="3">Distributor: <input type="checkbox" /></td>
-          <td colspan="5">Inspection Tag: <input type="checkbox" /></td>
+            <td colspan="12">Expiration Date: <input type="checkbox" /></td>
         </tr>
+
         <tr>
           <td colspan="1">w/ commission:<input type="checkbox" /></td>
           <td colspan="3">Non Distributor: <input type="checkbox" /></td>
-          <td colspan="5">Expiration Date: <input type="checkbox" /></td>
+         <td colspan="12">Mfg Date: <input type="checkbox" /></td>
         </tr>
+
         <tr>
           <td colspan="1">w/ bfp commission:<input type="checkbox" /></td>
           <td colspan="3">End User: <input type="checkbox" /></td>
-          <td colspan="5">Mfg Date: <input type="checkbox" /></td>
+             <td colspan="12">Serial No.: <input type="checkbox" /></td>
         </tr>
-        <tr>
-       <td>
-  VAT Included: <input type="checkbox" id="vatIncluded" onchange="calculateTotal()" onclick="toggleCheckboxes(this)">
-</td>
-          <td colspan="3">Corporate: <input type="checkbox" /></td>
-          <td colspan="5">Serial No.: <input type="checkbox" /></td>
-        </tr>
-        <tr>
-        <td>
-  VAT Excluded: <input type="checkbox" id="vatExcluded" onchange="calculateTotal()" onclick="toggleCheckboxes(this)">
-</td>
 
-          <td colspan="3">SALES OFFICER: <input type="test" required/></td>
-          <td colspan="5">Only do not test and press handle:<input type="checkbox" /></td>
+        <tr>
+          <td>
+            VAT Included: <input type="checkbox" id="vatIncluded" onchange="calculateTotal()" onclick="toggleCheckboxes(this)">
+          </td>
+          <td colspan="3">Corporate: <input type="checkbox" /></td>
+          <td colspan="12">Only do not test and press handle:<input type="checkbox" /></td>
         </tr>
+        <tr>
+          <td> VAT Excluded: <input type="checkbox" id="vatExcluded" onchange="calculateTotal()" onclick="toggleCheckboxes(this)"> </td>
+          <td colspan="3">SALES OFFICER: <input type="text" required/></td>
+        <td colspan="3">Decals/Sticker:</td>
+          <td colspan="3">Customize<input type="checkbox" /></td>
+          <td colspan="7">8A<input type="checkbox" /></td>
+        </tr>
+
         <tr>
           <td colspan="1">w/ ewt 1%: <input type="checkbox" /></td>
           <td colspan="3"></td>
-          <td colspan="5">Decals/Sticker: <input type="checkbox" /></td>
+           <td colspan="3">Inspection Tag:</td>
+           <td colspan="3">Customize<input type="checkbox" /></td>
+          <td colspan="7">8A<input type="checkbox" /></td>
         </tr>
         <!-- Headers: Items -->
-        <tr>
-          <th class="purple">UNIT</th>
-          <th class="purple">QTY</th>
-          <th class="purple" colspan="2">Articles</th>
-          <th class="purple">PRICE</th>
-          <th class="purple" colspan="2">Amount</th>
-          <th class="purple" colspan="2">Action</th>
-        </tr>
+          <tr>
+            <th class="purple">UNIT</th>
+            <th class="purple">QTY</th>
+            <th class="purple" colspan="2">Articles</th>
+            <th class="purple" colspan="1">PRICE</th>
+            <th class="purple" colspan="2">Amount</th>
+          
+            <th class="purple" colspan="3">Bfp Commission</th>
+            <th class="purple" colspan="2">Distributor Commission</th>
+            <th class="purple" colspan="2">Corporate Comission</th>
+              <th class="purple" colspan="2">Action</th>
+          </tr>
 
         <!-- Sample Initial Row -->
         <tr class="item-row">
@@ -505,7 +523,7 @@ textarea {
               <option value=" DRY-CHEMICAL"> DRY CHEMICAL FIRE EX.</option>
               <option value=" DRY-CHEMICAL"> DRY CHEMICAL FIRE EX. CEILING TYPE</option>
               <option value="FOAM">FOAM TYPE  FIRE EX.</option>
-              <option value="FOAM">FOAM TYPE  FIRE EX.  CEILING TYPE</option>
+              <option value="FOAM">FOAM TYPE  FIRE EX. CEILING TYPE</option>
               <option value="HFC-236fa">HFC-236fa FIRE EX.</option>
               <option value="HFC-236fa">HFC-236fa FIRE EX. CEILING TYPE</option>
               <option value="HCFC123">HCFC123 CHEMICAL FIRE EX.</option>
@@ -514,34 +532,22 @@ textarea {
           </td>
           <td><input type="text"  class="price" oninput="calculateTotal()"required  placeholder="0.00" /></td>
           <td colspan="2" class="amount" ></td>
-          <td  colspan="2"><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
+          <td colspan="3" ><input type="number" class="bfp" oninput="calculateTotal()"required placeholder="0.00"  /></td>
+          <td colspan="2" ><input type="number" class="distri" oninput="calculateTotal()"required placeholder="0.00"  /></td>
+          <td colspan="2" ><input type="number" class="corpo" oninput="calculateTotal()"required placeholder="0.00"  /></td>
+           <td  colspan="2"><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
         </tr>
-
         <!-- Total Price Row -->
         <tr class="total-row">
           <td colspan="5" style="text-align:right;" >Total Price:</td>
-          <td colspan="4"><input type="text"  id="totalPrice" readonly placeholder="0.00" /></td>
+          <td colspan="10"><input type="text"  id="totalPrice" readonly placeholder="0.00" /></td>
         </tr>
-       <!--commision -->
-        <tr>
-          <th colspan="2">
-            BFP Commission 
-            <input type="number" class="commission-input" placeholder="0.00" />
-          </th>
-          <th colspan="2">
-            Distributor Commission 
-            <input type="number" class="commission-input" placeholder="0.00" />
-          </th>
-          <th colspan="5">
-            Corporate Commission 
-            <input type="number" class="commission-input" placeholder="0.00" />
-          </th>
-        </tr>
+ 
 
         <!-- Notes -->
         <tr>
           <td class="note-cell">Note:</td>
-          <td colspan="12"><textarea name="note"></textarea></td>
+          <td colspan="16"><textarea name="note"></textarea></td>
         </tr>
         </tbody>
       </table>
@@ -578,9 +584,12 @@ function calculateTotal() {
   rows.forEach(row => {
     let qty = parseFloat(row.querySelector(".qty")?.value) || 0;
     let priceInput = row.querySelector(".price");
-
-    // ✅ Read current price directly
     let price = parseFloat(priceInput.value) || 0;
+
+    // ✅ Read commissions
+    let bfp = parseFloat(row.querySelector(".bfp")?.value) || 0;
+    let distri = parseFloat(row.querySelector(".distri")?.value) || 0;
+    let corpo = parseFloat(row.querySelector(".corpo")?.value) || 0;
 
     // ✅ Apply VAT logic
     let displayPrice = price;
@@ -590,31 +599,31 @@ function calculateTotal() {
       displayPrice = price / 1.12;   // remove 12%
     }
 
-    // ✅ Update price input
-    priceInput.value = displayPrice % 1 === 0 ? displayPrice : displayPrice.toFixed(2);
+    // ✅ Add commissions
+    let finalPrice = displayPrice + bfp + distri + corpo;
+
+    // ✅ Update price input to show FINAL price (VAT + commissions)
+    priceInput.value = finalPrice % 1 === 0 ? finalPrice : finalPrice.toFixed(2);
 
     // ✅ Calculate amount
-    let amount = qty * displayPrice;
-    row.querySelector(".amount").textContent = amount > 0
-      ? (amount % 1 === 0 ? amount : amount.toFixed(2))
-      : "";
+    let amount = qty * finalPrice;
+    row.querySelector(".amount").textContent =
+      amount > 0 ? (amount % 1 === 0 ? amount : amount.toFixed(2)) : "";
 
     total += amount;
   });
 
   // ✅ Update total
-  document.getElementById("totalPrice").value = total % 1 === 0 ? total : total.toFixed(2);
+  document.getElementById("totalPrice").value =
+    total % 1 === 0 ? total : total.toFixed(2);
 
   validateForm();
 }
-
-
 
   // Add Row Function
   function addRow(){
     let table = document.getElementById("orderTable").querySelector("tbody");
     let totalRow = table.querySelector(".total-row");
-
     let newRow = document.createElement("tr");
     newRow.classList.add("item-row");
     newRow.innerHTML = `
@@ -629,31 +638,33 @@ function calculateTotal() {
             <option value="pvc-pipe">100 lbs</option>
         </select>
       </td>
-
-      <td><input type="number" class="qty"onchange="calculateTotal()" oninput="calculateTotal()" required placeholder="0.00"/></td>
-      
+      <td><input type="number" class="qty"onchange="calculateTotal()" oninput="calculateTotal()" required placeholder="0.00"/></td> 
       <td colspan="2">
         <select class="categorySelect" style="width:100%;" required>
           <option value="">-- Select Category --</option>
-          <option value="fire-protection">ABC DRY CHEMICAL FIRE EXTINGUISHER</option>
-          <option value="electrical">FOAM TYPE (AFFF) FIRE EXTINGUISHER</option>
-          <option value="plumbing">HFC-236fa (CLEAN AGENT) FIRE EXTINGUISHER</option>
-          <option value="mepfs">HCFC 123 CHEMICAL FIRE EXTINGUISHER</option>
+          <option value="fire-protection">DRY CHEMICAL FIRE EX.</option>
+          <option value="electrical">DRY CHEMICAL FIRE EX. CEILING TYPE</option>
+          <option value="plumbing">FOAM TYPE FIRE EX.</option>
+          <option value="mepfs">FOAM TYPE FIRE EX. CEILING TYPE</option>
+          <option value="mepfs">HFC-236fa FIRE EX.</option>
+          <option value="mepfs">HFC-236fa FIRE EX. CEILING TYPE</option>
+          <option value="mepfs">HCFC123 CHEMICAL FIRE EX.</option>
+          <option value="mepfs">HCFC123 CHEMICAL FIRE EX. CEILING TYPE</option>
         </select>
       </td>
-
       <td><input type="number" step="0.01" class="price"onchange="calculateTotal()" oninput="calculateTotal()" required placeholder="0.00"/></td>
       <td colspan="2" class="amount"></td>
+        <td colspan="3" ><input type="number" class="bfp" oninput="calculateTotal()"required placeholder="0.00"  /></td>
+          <td colspan="2" ><input type="number" class="distri" oninput="calculateTotal()"required placeholder="0.00"  /></td>
+          <td colspan="2" ><input type="number" class="corpo" oninput="calculateTotal()"required placeholder="0.00"  /></td>
+     
       <td colspan="2"><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
     `;
-
     table.insertBefore(newRow, totalRow);
-
     // ✅ Reinitialize Select2 for the new row
     initSelect2();
     validateForm();
   }
-
   // Remove Row Function
   function removeRow(btn){
     let row = btn.closest("tr");
@@ -670,7 +681,6 @@ function removeRow(btn){
   calculateTotal();
   validateForm();
 }
-
 function savePDF() {
   const saveBtn = document.getElementById("saveBtn");
   validateForm();
@@ -680,21 +690,34 @@ function savePDF() {
   }
 
   const element = document.getElementById("printArea");
-  const originalWidth = element.style.width;
-  element.style.width = "210mm";
+
+  // ✅ Create wrapper for scaling
+  const wrapper = document.createElement("div");
+  wrapper.style.display = "flex";
+  wrapper.style.justifyContent = "center"; 
+  wrapper.style.alignItems = "center"; 
+  wrapper.style.width = "100%";
+
+  // ✅ Clone element so we don’t affect the original
+  const copy = element.cloneNode(true);
+  copy.style.transform = "scale(0.8)";   // 🔹 adjust 0.8 → smaller size (try 0.7 or 0.6 if you want smaller)
+  copy.style.transformOrigin = "top left";
+  copy.style.width = "100%";
+
+  wrapper.appendChild(copy);
 
   const opt = {
-    margin: 0,
+    margin: [10, 10, 10, 10], // top, left, bottom, right
     filename: 'sales-order.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
+    image: { type: 'jpeg', quality: 0.95 },
     html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' } // ✅ Landscape A4
   };
 
-  html2pdf().set(opt).from(element).save().then(() => {
-    element.style.width = originalWidth || "100%";
-  });
+  // ✅ Generate PDF
+  html2pdf().set(opt).from(wrapper).save();
 }
+
 
 function toggleCheckboxes(clicked) {
   let chk8A = document.getElementById("chk8A");
