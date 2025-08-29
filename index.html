@@ -575,6 +575,20 @@ function toggleCheckboxes(clicked) {
   }
 }
 
+function formatNumber(input) {
+  // Remove all non-digits & dots first
+  let value = input.value.replace(/,/g, '');
+  
+  if (value === "" || isNaN(value)) return;
+
+  // Reapply formatted commas
+  input.value = Number(value).toLocaleString('en-US');
+}
+
+function parseNumber(value) {
+  return parseFloat(value.replace(/,/g, '')) || 0;
+}
+
 function calculateTotal() {
   let rows = document.querySelectorAll(".item-row");
   let total = 0;
@@ -582,9 +596,9 @@ function calculateTotal() {
   let vatExcluded = document.getElementById("vatExcluded")?.checked;
 
   rows.forEach(row => {
-    let qty = parseFloat(row.querySelector(".qty")?.value) || 0;
+    let qty = parseNumber(row.querySelector(".qty")?.value);
     let priceInput = row.querySelector(".price");
-    let price = parseFloat(priceInput.value) || 0;
+    let price = parseNumber(priceInput.value);
 
     // ✅ Apply VAT logic
     let displayPrice = price;
@@ -594,20 +608,20 @@ function calculateTotal() {
       displayPrice = price / 1.12;   // remove 12%
     }
 
-    // ✅ Update price input to show FINAL price (VAT applied only)
-    priceInput.value = displayPrice % 1 === 0 ? displayPrice : displayPrice.toFixed(2);
+    // ✅ Update price input with commas
+    priceInput.value = Number(displayPrice.toFixed(2)).toLocaleString('en-US');
 
     // ✅ Calculate amount
     let amount = qty * displayPrice;
     row.querySelector(".amount").textContent =
-      amount > 0 ? (amount % 1 === 0 ? amount : amount.toFixed(2)) : "";
+      amount > 0 ? Number(amount.toFixed(2)).toLocaleString('en-US') : "";
 
     total += amount;
   });
 
-  // ✅ Update total
+  // ✅ Update total with commas
   document.getElementById("totalPrice").value =
-    total % 1 === 0 ? total : total.toFixed(2);
+    Number(total.toFixed(2)).toLocaleString('en-US');
 
   validateForm();
 }
