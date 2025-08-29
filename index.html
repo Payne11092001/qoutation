@@ -586,11 +586,6 @@ function calculateTotal() {
     let priceInput = row.querySelector(".price");
     let price = parseFloat(priceInput.value) || 0;
 
-    // ✅ Read commissions
-    let bfp = parseFloat(row.querySelector(".bfp")?.value) || 0;
-    let distri = parseFloat(row.querySelector(".distri")?.value) || 0;
-    let corpo = parseFloat(row.querySelector(".corpo")?.value) || 0;
-
     // ✅ Apply VAT logic
     let displayPrice = price;
     if (vatIncluded) {
@@ -599,14 +594,11 @@ function calculateTotal() {
       displayPrice = price / 1.12;   // remove 12%
     }
 
-    // ✅ Add commissions
-    let finalPrice = displayPrice + bfp + distri + corpo;
-
-    // ✅ Update price input to show FINAL price (VAT + commissions)
-    priceInput.value = finalPrice % 1 === 0 ? finalPrice : finalPrice.toFixed(2);
+    // ✅ Update price input to show FINAL price (VAT applied only)
+    priceInput.value = displayPrice % 1 === 0 ? displayPrice : displayPrice.toFixed(2);
 
     // ✅ Calculate amount
-    let amount = qty * finalPrice;
+    let amount = qty * displayPrice;
     row.querySelector(".amount").textContent =
       amount > 0 ? (amount % 1 === 0 ? amount : amount.toFixed(2)) : "";
 
@@ -619,6 +611,7 @@ function calculateTotal() {
 
   validateForm();
 }
+
 
   // Add Row Function
   function addRow(){
