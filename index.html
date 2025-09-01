@@ -506,36 +506,31 @@ textarea {
         <!-- Sample Initial Row -->
         <tr class="item-row">
           <td>
-            <select class="itemSelect" style="width:100%;" required>
-              <option value="">-- Select Item --</option>
-              <option value="fire-hose">1 lbs</option>
-              <option value="smoke-detector">3 lbs</option>
-              <option value="circuit-breaker">10 lbs</option>
-              <option value="water-pump">20 lbs</option>
-              <option value="pvc-pipe">50 lbs</option>
-                <option value="pvc-pipe">100 lbs</option>
-            </select>
+            <input type="text" class="itemInput" style="width:100%;" required placeholder="Enter Item"/>
           </td>
-          <td ><input type="number" class="qty" oninput="calculateTotal()"required placeholder="0.00"  /></td>         
+          <td>
+            <input type="number" class="qty" onchange="calculateTotal()" oninput="calculateTotal()" required placeholder="0.00"/>
+          </td>
           <td colspan="2">
-            <select id="categorySelect" class="categorySelect" style="width:100%;" required>
-              <option value="">-- Select Category --</option>
-              <option value=" DRY-CHEMICAL"> DRY CHEMICAL FIRE EX.</option>
-              <option value=" DRY-CHEMICAL"> DRY CHEMICAL FIRE EX. CEILING TYPE</option>
-              <option value="FOAM">FOAM TYPE  FIRE EX.</option>
-              <option value="FOAM">FOAM TYPE  FIRE EX. CEILING TYPE</option>
-              <option value="HFC-236fa">HFC-236fa FIRE EX.</option>
-              <option value="HFC-236fa">HFC-236fa FIRE EX. CEILING TYPE</option>
-              <option value="HCFC123">HCFC123 CHEMICAL FIRE EX.</option>
-              <option value="HCFC123">HCFC123 CHEMICAL FIRE EX. CEILING TYPE</option>
-            </select>
+            <input type="text" class="categoryInput" style="width:100%;" required placeholder="Enter Category"/>
           </td>
-          <td><input type="text"  class="price" oninput="calculateTotal()"required  placeholder="0.00" /></td>
-          <td colspan="2" class="amount" ></td>
-          <td colspan="3" ><input type="number" class="bfp" oninput="calculateTotal()"required placeholder="0.00"  /></td>
-          <td colspan="2" ><input type="number" class="distri" oninput="calculateTotal()"required placeholder="0.00"  /></td>
-          <td colspan="2" ><input type="number" class="corpo" oninput="calculateTotal()"required placeholder="0.00"  /></td>
-           <td  colspan="2"><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
+          <td>
+            <input type="number" step="0.01" class="price" onchange="calculateTotal()" oninput="calculateTotal()" required placeholder="0.00"/>
+          </td>
+          <td colspan="2" class="amount"></td>
+          <td colspan="3">
+            <input type="number" class="bfp" oninput="calculateTotal()" required placeholder="0.00"/>
+          </td>
+          <td colspan="2">
+            <input type="number" class="distri" oninput="calculateTotal()" required placeholder="0.00"/>
+          </td>
+          <td colspan="2">
+            <input type="number" class="corpo" oninput="calculateTotal()" required placeholder="0.00"/>
+          </td>
+          <td colspan="2">
+            <button class="btn btn-danger" onclick="removeRow(this)">🗑</button>
+          </td>
+
         </tr>
         <!-- Total Price Row -->
         <tr class="total-row">
@@ -620,38 +615,32 @@ function calculateTotal() {
     let newRow = document.createElement("tr");
     newRow.classList.add("item-row");
     newRow.innerHTML = `
-      <td>
-        <select class="itemSelect" style="width:100%;" required>
-          <option value="">-- Select Item --</option>
-          <option value="fire-hose">1 lbs</option>
-          <option value="smoke-detector">3 lbs</option>
-          <option value="circuit-breaker">10 lbs</option>
-          <option value="water-pump">20 lbs</option>
-          <option value="pvc-pipe">50 lbs</option>
-            <option value="pvc-pipe">100 lbs</option>
-        </select>
-      </td>
-      <td><input type="number" class="qty"onchange="calculateTotal()" oninput="calculateTotal()" required placeholder="0.00"/></td> 
-      <td colspan="2">
-        <select class="categorySelect" style="width:100%;" required>
-          <option value="">-- Select Category --</option>
-          <option value="fire-protection">DRY CHEMICAL FIRE EX.</option>
-          <option value="electrical">DRY CHEMICAL FIRE EX. CEILING TYPE</option>
-          <option value="plumbing">FOAM TYPE FIRE EX.</option>
-          <option value="mepfs">FOAM TYPE FIRE EX. CEILING TYPE</option>
-          <option value="mepfs">HFC-236fa FIRE EX.</option>
-          <option value="mepfs">HFC-236fa FIRE EX. CEILING TYPE</option>
-          <option value="mepfs">HCFC123 CHEMICAL FIRE EX.</option>
-          <option value="mepfs">HCFC123 CHEMICAL FIRE EX. CEILING TYPE</option>
-        </select>
-      </td>
-      <td><input type="number" step="0.01" class="price"onchange="calculateTotal()" oninput="calculateTotal()" required placeholder="0.00"/></td>
-      <td colspan="2" class="amount"></td>
-        <td colspan="3" ><input type="number" class="bfp" oninput="calculateTotal()"required placeholder="0.00"  /></td>
-          <td colspan="2" ><input type="number" class="distri" oninput="calculateTotal()"required placeholder="0.00"  /></td>
-          <td colspan="2" ><input type="number" class="corpo" oninput="calculateTotal()"required placeholder="0.00"  /></td>
-     
-      <td colspan="2"><button class="btn btn-danger" onclick="removeRow(this)">🗑</button></td>
+        <td>
+          <input type="text" class="itemInput" style="width:100%;" required placeholder="Enter Item"/>
+        </td>
+        <td>
+          <input type="number" class="qty" onchange="calculateTotal()" oninput="calculateTotal()" required placeholder="0.00"/>
+        </td>
+        <td colspan="2">
+          <input type="text" class="categoryInput" style="width:100%;" required placeholder="Enter Category"/>
+        </td>
+        <td>
+          <input type="number" step="0.01" class="price" onchange="calculateTotal()" oninput="calculateTotal()" required placeholder="0.00"/>
+        </td>
+        <td colspan="2" class="amount"></td>
+        <td colspan="3">
+          <input type="number" class="bfp" oninput="calculateTotal()" required placeholder="0.00"/>
+        </td>
+        <td colspan="2">
+          <input type="number" class="distri" oninput="calculateTotal()" required placeholder="0.00"/>
+        </td>
+        <td colspan="2">
+          <input type="number" class="corpo" oninput="calculateTotal()" required placeholder="0.00"/>
+        </td>
+        <td colspan="2">
+          <button class="btn btn-danger" onclick="removeRow(this)">🗑</button>
+        </td>
+
     `;
     table.insertBefore(newRow, totalRow);
     // ✅ Reinitialize Select2 for the new row
