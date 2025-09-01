@@ -498,8 +498,8 @@ textarea {
             <th class="purple" colspan="2">Amount</th>
           
             <th class="purple" colspan="3">Bfp Commission</th>
-            <th class="purple" colspan="2">Distributor Commission</th>
-            <th class="purple" colspan="2">Corporate Comission</th>
+            <th class="purple" colspan="2">Distri. Commission</th>
+            <th class="purple" colspan="2">Corp. Comission</th>
               <th class="purple" colspan="2">Action</th>
           </tr>
 
@@ -508,7 +508,7 @@ textarea {
           <td>
             <select class="itemSelect" style="width:100%;" required>
               <option value="">-- Select Item --</option>
-              <option value="fire-hose">1 Lbs</option>
+              <option value="fire-hose">1 lbs</option>
               <option value="smoke-detector">3 lbs</option>
               <option value="circuit-breaker">10 lbs</option>
               <option value="water-pump">20 lbs</option>
@@ -575,20 +575,6 @@ function toggleCheckboxes(clicked) {
   }
 }
 
-function formatNumber(input) {
-  // Remove all non-digits & dots first
-  let value = input.value.replace(/,/g, '');
-  
-  if (value === "" || isNaN(value)) return;
-
-  // Reapply formatted commas
-  input.value = Number(value).toLocaleString('en-US');
-}
-
-function parseNumber(value) {
-  return parseFloat(value.replace(/,/g, '')) || 0;
-}
-
 function calculateTotal() {
   let rows = document.querySelectorAll(".item-row");
   let total = 0;
@@ -596,9 +582,9 @@ function calculateTotal() {
   let vatExcluded = document.getElementById("vatExcluded")?.checked;
 
   rows.forEach(row => {
-    let qty = parseNumber(row.querySelector(".qty")?.value);
+    let qty = parseFloat(row.querySelector(".qty")?.value) || 0;
     let priceInput = row.querySelector(".price");
-    let price = parseNumber(priceInput.value);
+    let price = parseFloat(priceInput.value) || 0;
 
     // ✅ Apply VAT logic
     let displayPrice = price;
@@ -608,20 +594,20 @@ function calculateTotal() {
       displayPrice = price / 1.12;   // remove 12%
     }
 
-    // ✅ Update price input with commas
-    priceInput.value = Number(displayPrice.toFixed(2)).toLocaleString('en-US');
+    // ✅ Update price input to show FINAL price (VAT applied only)
+    priceInput.value = displayPrice % 1 === 0 ? displayPrice : displayPrice.toFixed(2);
 
     // ✅ Calculate amount
     let amount = qty * displayPrice;
     row.querySelector(".amount").textContent =
-      amount > 0 ? Number(amount.toFixed(2)).toLocaleString('en-US') : "";
+      amount > 0 ? (amount % 1 === 0 ? amount : amount.toFixed(2)) : "";
 
     total += amount;
   });
 
-  // ✅ Update total with commas
+  // ✅ Update total
   document.getElementById("totalPrice").value =
-    Number(total.toFixed(2)).toLocaleString('en-US');
+    total % 1 === 0 ? total : total.toFixed(2);
 
   validateForm();
 }
@@ -637,7 +623,7 @@ function calculateTotal() {
       <td>
         <select class="itemSelect" style="width:100%;" required>
           <option value="">-- Select Item --</option>
-          <option value="fire-hose">1 Lbs</option>
+          <option value="fire-hose">1 bs</option>
           <option value="smoke-detector">3 lbs</option>
           <option value="circuit-breaker">10 lbs</option>
           <option value="water-pump">20 lbs</option>
@@ -707,7 +693,7 @@ function savePDF() {
 
   // ✅ Clone element so we don’t affect the original
   const copy = element.cloneNode(true);
-  copy.style.transform = "scale(0.8)";   // 🔹 adjust 0.8 → smaller size (try 0.7 or 0.6 if you want smaller)
+  copy.style.transform = "scale(0.6)";   // 🔹 adjust 0.8 → smaller size (try 0.7 or 0.6 if you want smaller)
   copy.style.transformOrigin = "top left";
   copy.style.width = "100%";
 
